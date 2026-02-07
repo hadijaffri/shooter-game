@@ -8,9 +8,10 @@ export class SceneManager {
     this.renderer = null;
     this.camera = null;
     this.cameraTarget = new THREE.Vector3();
-    this.cameraOffset = new THREE.Vector3(0, 450, 280);
+    this.cameraOffset = new THREE.Vector3(0, 350, 220);
     this.shakeIntensity = 0;
     this.shakeDecay = 0.9;
+    this.firstFollow = true;
 
     this.init();
   }
@@ -23,17 +24,20 @@ export class SceneManager {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.2;
+    this.renderer.toneMappingExposure = 1.4;
+    this.renderer.domElement.style.position = 'absolute';
+    this.renderer.domElement.style.top = '0';
+    this.renderer.domElement.style.left = '0';
     this.container.appendChild(this.renderer.domElement);
 
     // Camera
-    this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 3000);
-    this.camera.position.set(GAME.WIDTH / 2, 450, GAME.HEIGHT / 2 + 280);
-    this.camera.lookAt(GAME.WIDTH / 2, 0, GAME.HEIGHT / 2);
+    this.camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 5000);
+    this.camera.position.set(100, 350, 100 + 220);
+    this.camera.lookAt(100, 0, 100);
 
     // Scene background
-    this.scene.background = new THREE.Color(0x0a0a1a);
-    this.scene.fog = new THREE.FogExp2(0x0a0a1a, 0.0006);
+    this.scene.background = new THREE.Color(0x0d0d24);
+    this.scene.fog = new THREE.Fog(0x0d0d24, 600, 2000);
 
     this.setupLighting();
     this.setupGround();
@@ -44,12 +48,16 @@ export class SceneManager {
   }
 
   setupLighting() {
-    // Ambient
-    const ambient = new THREE.AmbientLight(0x334466, 0.6);
+    // Ambient - bright enough to see everything
+    const ambient = new THREE.AmbientLight(0x6688aa, 1.0);
     this.scene.add(ambient);
 
+    // Hemisphere light for natural fill
+    const hemiLight = new THREE.HemisphereLight(0x8899bb, 0x223344, 0.8);
+    this.scene.add(hemiLight);
+
     // Main directional light
-    const dirLight = new THREE.DirectionalLight(0xffeedd, 1.0);
+    const dirLight = new THREE.DirectionalLight(0xffeedd, 1.5);
     dirLight.position.set(GAME.WIDTH / 2, 500, GAME.HEIGHT / 3);
     dirLight.castShadow = true;
     dirLight.shadow.mapSize.width = 2048;
@@ -81,9 +89,9 @@ export class SceneManager {
     // Ground plane
     const groundGeo = new THREE.PlaneGeometry(GAME.WIDTH, GAME.HEIGHT);
     const groundMat = new THREE.MeshStandardMaterial({
-      color: 0x1a1a2e,
-      roughness: 0.85,
-      metalness: 0.15,
+      color: 0x222240,
+      roughness: 0.8,
+      metalness: 0.2,
     });
     const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.rotation.x = -Math.PI / 2;
@@ -92,9 +100,9 @@ export class SceneManager {
     this.scene.add(ground);
 
     // Grid lines
-    const gridHelper = new THREE.GridHelper(GAME.WIDTH, 40, 0x16213e, 0x16213e);
+    const gridHelper = new THREE.GridHelper(GAME.WIDTH, 40, 0x2a3a5e, 0x2a3a5e);
     gridHelper.position.set(GAME.WIDTH / 2, 0.1, GAME.HEIGHT / 2);
-    gridHelper.material.opacity = 0.4;
+    gridHelper.material.opacity = 0.6;
     gridHelper.material.transparent = true;
     this.scene.add(gridHelper);
 
@@ -114,7 +122,13 @@ export class SceneManager {
       z + this.cameraOffset.z
     );
 
-    this.camera.position.lerp(desired, 0.06);
+    // Snap camera instantly on first frame so player is visible immediately
+    if (this.firstFollow) {
+      this.camera.position.copy(desired);
+      this.firstFollow = false;
+    } else {
+      this.camera.position.lerp(desired, 0.08);
+    }
 
     // Shake
     if (this.shakeIntensity > 0.5) {
