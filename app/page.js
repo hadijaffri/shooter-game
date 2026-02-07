@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 export default function Home() {
-  const containerRef = useRef(null);
+  const gameContainerRef = useRef(null);
   const gameRef = useRef(null);
   const [screen, setScreen] = useState('menu');
   const [roomCode, setRoomCode] = useState('');
@@ -17,8 +17,14 @@ export default function Home() {
 
     try {
       const { Game3D } = await import('../game/Game3D');
-      const container = containerRef.current;
+      const container = gameContainerRef.current;
 
+      // Clear any previous game
+      while (container.firstChild) {
+        container.removeChild(container.firstChild);
+      }
+
+      setStatus('Generating arena...');
       const game = new Game3D(container, name);
       gameRef.current = game;
 
@@ -37,14 +43,13 @@ export default function Home() {
         setStatus('Joining room...');
         await game.init('online', roomId);
       } else {
-        setStatus('Generating arena...');
         await game.init('offline');
       }
 
       setScreen('game');
       game.start();
     } catch (err) {
-      console.error(err);
+      console.error('Game init error:', err);
       setStatus(`Error: ${err.message}`);
       setTimeout(() => setScreen('menu'), 3000);
     }
@@ -61,14 +66,30 @@ export default function Home() {
     return () => {
       if (gameRef.current) {
         gameRef.current.stop();
+        gameRef.current = null;
       }
     };
   }, []);
 
   return (
-    <div ref={containerRef} style={{ width: '100vw', height: '100vh', position: 'relative' }}>
+    <>
+      {/* 3D game renders into this div - always mounted, never unmounted by React */}
+      <div
+        ref={gameContainerRef}
+        id="game-container"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 0,
+        }}
+      />
+
+      {/* UI overlays render on top */}
       {screen === 'menu' && (
-        <div className="menu-overlay">
+        <div className="menu-overlay" style={{ zIndex: 100 }}>
           <div className="menu-container">
             <h1 className="menu-title">
               <span className="title-glow">NEON</span>
@@ -138,13 +159,13 @@ export default function Home() {
       )}
 
       {screen === 'loading' && (
-        <div className="loading-overlay">
+        <div className="loading-overlay" style={{ zIndex: 100 }}>
           <div className="loading-text">{status}</div>
         </div>
       )}
 
       {screen === 'lobby' && (
-        <div className="menu-overlay">
+        <div className="menu-overlay" style={{ zIndex: 100 }}>
           <div className="menu-container">
             <h1 className="menu-title">
               <span className="title-glow">ROOM</span>
@@ -163,6 +184,6 @@ export default function Home() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

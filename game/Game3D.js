@@ -72,12 +72,14 @@ export class Game3D extends EventEmitter {
     this.mapData = this.mapGen.generate();
     this.collisions.setWalls(this.mapData.walls);
     this.wallBuilder.buildWalls(this.mapData.walls);
+    console.log('[Game3D] Map generated, walls:', this.mapData.walls.length);
 
     // Create local player
     const spawn = this.mapData.spawnPoints[0];
     this.localPlayer = new Player(spawn.x, spawn.y, this.playerName, 0);
     this.localPlayerModel = new PlayerModel(this.localPlayer.color, false);
     this.sceneManager.add(this.localPlayerModel.group);
+    console.log('[Game3D] Player created at', spawn.x, spawn.y, 'color:', this.localPlayer.color);
 
     // Set up input
     this.setupInput();
@@ -287,6 +289,7 @@ export class Game3D extends EventEmitter {
   }
 
   start() {
+    console.log('[Game3D] Starting game loop, scene children:', this.sceneManager.scene.children.length);
     this.running = true;
     this.lastFrame = performance.now();
     this.loop();
@@ -345,11 +348,12 @@ export class Game3D extends EventEmitter {
     if (player.dead && Date.now() - player.respawnTimer > PLAYER.RESPAWN_TIME) {
       const sp = this.mapData.spawnPoints[randomInt(0, this.mapData.spawnPoints.length - 1)];
       player.respawn(sp.x, sp.y);
+      this.localPlayerModel.setVisible(true);
     }
 
     // Update player model
     this.localPlayerModel.update(player, dt);
-    if (player.dead) this.localPlayerModel.setVisible(false);
+    this.localPlayerModel.setVisible(!player.dead);
 
     const allPlayers = [player, ...Array.from(this.remotePlayers.values())];
 

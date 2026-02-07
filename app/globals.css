@@ -10,6 +10,9 @@ html, body {
   overflow: hidden;
   background: #0a0a1a;
   font-family: 'Courier New', monospace;
+}
+
+#game-container canvas {
   cursor: none;
 }
 
