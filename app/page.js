@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 
 export default function Home() {
-  const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const gameRef = useRef(null);
   const [screen, setScreen] = useState('menu');
@@ -14,15 +13,13 @@ export default function Home() {
 
   const startGame = async (mode, name, roomId = null) => {
     setScreen('loading');
-    setStatus('Initializing...');
+    setStatus('Loading 3D engine...');
 
     try {
-      const { Game } = await import('../game/Game');
-      const canvas = canvasRef.current;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const { Game3D } = await import('../game/Game3D');
+      const container = containerRef.current;
 
-      const game = new Game(canvas, name);
+      const game = new Game3D(container, name);
       gameRef.current = game;
 
       game.on('room-created', (id) => {
@@ -40,6 +37,7 @@ export default function Home() {
         setStatus('Joining room...');
         await game.init('online', roomId);
       } else {
+        setStatus('Generating arena...');
         await game.init('offline');
       }
 
@@ -48,7 +46,7 @@ export default function Home() {
     } catch (err) {
       console.error(err);
       setStatus(`Error: ${err.message}`);
-      setTimeout(() => setScreen('menu'), 2000);
+      setTimeout(() => setScreen('menu'), 3000);
     }
   };
 
@@ -69,15 +67,6 @@ export default function Home() {
 
   return (
     <div ref={containerRef} style={{ width: '100vw', height: '100vh', position: 'relative' }}>
-      <canvas
-        ref={canvasRef}
-        style={{
-          display: screen === 'game' ? 'block' : 'none',
-          width: '100%',
-          height: '100%',
-        }}
-      />
-
       {screen === 'menu' && (
         <div className="menu-overlay">
           <div className="menu-container">
@@ -85,7 +74,7 @@ export default function Home() {
               <span className="title-glow">NEON</span>
               <span className="title-accent">ARENA</span>
             </h1>
-            <p className="menu-subtitle">Multiplayer Top-Down Shooter</p>
+            <p className="menu-subtitle">3D Multiplayer Shooter</p>
 
             <div className="menu-section">
               <input
@@ -104,7 +93,7 @@ export default function Home() {
                 onClick={() => startGame('offline', playerName)}
               >
                 <span className="btn-icon">&#9876;</span>
-                Play Offline (vs Bots)
+                Play Offline (vs Waves)
               </button>
 
               <button
