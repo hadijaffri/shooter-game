@@ -8,17 +8,17 @@ export class WallBuilder {
 
   buildWalls(walls) {
     const wallMat = new THREE.MeshStandardMaterial({
-      color: 0x4a4a6a,
+      color: 0x5a5a7a,
       roughness: 0.6,
       metalness: 0.4,
-      emissive: 0x222244,
-      emissiveIntensity: 0.1,
+      emissive: 0x333355,
+      emissiveIntensity: 0.3,
     });
 
     const edgeMat = new THREE.MeshStandardMaterial({
-      color: 0x6a6a9a,
+      color: 0x7a7aaa,
       emissive: 0x4ECDC4,
-      emissiveIntensity: 0.15,
+      emissiveIntensity: 0.4,
       roughness: 0.3,
       metalness: 0.6,
     });

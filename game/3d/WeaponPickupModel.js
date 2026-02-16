@@ -20,7 +20,7 @@ export class WeaponPickupModel {
     const mat = new THREE.MeshStandardMaterial({
       color,
       emissive: color,
-      emissiveIntensity: 0.4,
+      emissiveIntensity: 0.8,
       roughness: 0.2,
       metalness: 0.8,
     });
@@ -55,7 +55,7 @@ export class WeaponPickupModel {
     const platMat = new THREE.MeshStandardMaterial({
       color: 0x333355,
       emissive: color,
-      emissiveIntensity: 0.15,
+      emissiveIntensity: 0.35,
       roughness: 0.5,
       metalness: 0.5,
     });
@@ -64,7 +64,7 @@ export class WeaponPickupModel {
     this.group.add(this.platform);
 
     // Glow
-    const light = new THREE.PointLight(color, 1.0, 80);
+    const light = new THREE.PointLight(color, 2.0, 150);
     light.position.y = 5;
     this.group.add(light);
     this.light = light;

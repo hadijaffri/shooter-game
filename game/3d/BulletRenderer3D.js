@@ -15,7 +15,7 @@ export class BulletRenderer3D {
     const mat = new THREE.MeshStandardMaterial({
       color: new THREE.Color(bullet.color),
       emissive: new THREE.Color(bullet.color),
-      emissiveIntensity: 1.5,
+      emissiveIntensity: 2.5,
       roughness: 0.1,
       metalness: 0.5,
     });
@@ -27,7 +27,7 @@ export class BulletRenderer3D {
     this.scene.add(mesh);
 
     // Point light on bullet
-    const light = new THREE.PointLight(new THREE.Color(bullet.color), 0.8, 60);
+    const light = new THREE.PointLight(new THREE.Color(bullet.color), 1.5, 120);
     light.position.set(bullet.x, 20, bullet.y);
     this.scene.add(light);
 

@@ -36,7 +36,7 @@ export class SceneManager {
 
     // Scene background
     this.scene.background = new THREE.Color(0x0d0d24);
-    this.scene.fog = new THREE.Fog(0x0d0d24, 600, 2000);
+    this.scene.fog = new THREE.Fog(0x0d0d24, 1200, 4000);
 
     this.setupLighting();
     this.setupGround();
@@ -48,11 +48,11 @@ export class SceneManager {
 
   setupLighting() {
     // Ambient - bright enough to see everything
-    const ambient = new THREE.AmbientLight(0x6688aa, 1.0);
+    const ambient = new THREE.AmbientLight(0x8899bb, 1.4);
     this.scene.add(ambient);
 
     // Hemisphere light for natural fill
-    const hemiLight = new THREE.HemisphereLight(0x8899bb, 0x223344, 0.8);
+    const hemiLight = new THREE.HemisphereLight(0x99aacc, 0x334455, 1.2);
     this.scene.add(hemiLight);
 
     // Main directional light
@@ -71,16 +71,16 @@ export class SceneManager {
     this.scene.add(dirLight);
 
     // Accent lights for neon feel
-    const pointLight1 = new THREE.PointLight(0x4ECDC4, 1.5, 800);
-    pointLight1.position.set(400, 100, 400);
+    const pointLight1 = new THREE.PointLight(0x4ECDC4, 2.0, 1400);
+    pointLight1.position.set(400, 150, 400);
     this.scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0xFF6B6B, 1.5, 800);
-    pointLight2.position.set(GAME.WIDTH - 400, 100, GAME.HEIGHT - 400);
+    const pointLight2 = new THREE.PointLight(0xFF6B6B, 2.0, 1400);
+    pointLight2.position.set(GAME.WIDTH - 400, 150, GAME.HEIGHT - 400);
     this.scene.add(pointLight2);
 
-    const pointLight3 = new THREE.PointLight(0x9370DB, 1.0, 600);
-    pointLight3.position.set(GAME.WIDTH / 2, 80, GAME.HEIGHT / 2);
+    const pointLight3 = new THREE.PointLight(0x9370DB, 1.5, 1200);
+    pointLight3.position.set(GAME.WIDTH / 2, 120, GAME.HEIGHT / 2);
     this.scene.add(pointLight3);
   }
 
@@ -88,9 +88,11 @@ export class SceneManager {
     // Ground plane
     const groundGeo = new THREE.PlaneGeometry(GAME.WIDTH, GAME.HEIGHT);
     const groundMat = new THREE.MeshStandardMaterial({
-      color: 0x222240,
-      roughness: 0.8,
-      metalness: 0.2,
+      color: 0x2a2a4a,
+      roughness: 0.7,
+      metalness: 0.3,
+      emissive: 0x111128,
+      emissiveIntensity: 0.3,
     });
     const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.rotation.x = -Math.PI / 2;
@@ -99,9 +101,9 @@ export class SceneManager {
     this.scene.add(ground);
 
     // Grid lines
-    const gridHelper = new THREE.GridHelper(GAME.WIDTH, 40, 0x2a3a5e, 0x2a3a5e);
+    const gridHelper = new THREE.GridHelper(GAME.WIDTH, 40, 0x3a4a6e, 0x3a4a6e);
     gridHelper.position.set(GAME.WIDTH / 2, 0.1, GAME.HEIGHT / 2);
-    gridHelper.material.opacity = 0.6;
+    gridHelper.material.opacity = 0.7;
     gridHelper.material.transparent = true;
     this.scene.add(gridHelper);
 

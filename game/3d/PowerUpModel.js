@@ -42,7 +42,7 @@ export class PowerUpModel {
     }
 
     // Glow light
-    this.glowLight = new THREE.PointLight(color, 1.5, 100);
+    this.glowLight = new THREE.PointLight(color, 2.5, 180);
     this.glowLight.position.y = 5;
     this.group.add(this.glowLight);
 

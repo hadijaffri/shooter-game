@@ -20,7 +20,7 @@ export class PlayerModel {
       roughness: 0.4,
       metalness: 0.6,
       emissive: this.color,
-      emissiveIntensity: 0.15,
+      emissiveIntensity: 0.5,
     });
     this.body = new THREE.Mesh(bodyGeo, bodyMat);
     this.body.position.y = 15;
@@ -34,7 +34,7 @@ export class PlayerModel {
       roughness: 0.3,
       metalness: 0.5,
       emissive: this.color,
-      emissiveIntensity: 0.2,
+      emissiveIntensity: 0.6,
     });
     this.head = new THREE.Mesh(headGeo, headMat);
     this.head.position.y = 38;
